@@ -1,1 +1,1 @@
-\section{Finite-Key Analysis of Entanglement-Based QKD Protocols Using EAT}
+#Finite-Key Analysis of Entanglement-Based QKD Protocols Using EAT
