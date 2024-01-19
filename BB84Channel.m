@@ -9,7 +9,7 @@ function channelModel = BB84Channel(protocolDescription,names,p)
     %user should supply the list of parameters used in this description/channel file
     %this list varNames should be a subset of the full parameter list declared in the preset file
     %parameters specified in varNames can be used below like any other MATLAB variables
-    varNames=["ed","pz"];
+    varNames=["Q","pz"];
     
     %%%%%%%%%%%%%%%%%%%%% interfacing (please do not modify) %%%%%%%%%%%%%%%%%%%%%%%%%
     
@@ -30,36 +30,22 @@ function channelModel = BB84Channel(protocolDescription,names,p)
     
     ketPlus = 1/sqrt(2)*[1;1];
     ketMinus = 1/sqrt(2)*[1;-1];
-    signalStates = {[1;0], [0;1], ketPlus, ketMinus};
-    probList = [pz/2; pz/2; (1-pz)/2; (1-pz)/2];
     
-    % rho_A constraints
-    rhoA = zeros(dimA);
-    for jRow = 1 : dimA
-        for kColumn = 1 : dimA
-            rhoA(jRow,kColumn) = sqrt(probList(jRow) * probList(kColumn)) * signalStates{kColumn}' * signalStates{jRow};
-        end
-    end
-    
-    basis = hermitianBasis(dimA);
-    for iBasisElm = 1 : length(basis)
-        addExpectations(trace(rhoA * basis{iBasisElm}));
-    end
+    %Bell states
+    phiPlus = 1/sqrt(2)*[1;0;0;1];
+    phiMinus = 1/sqrt(2)*[1;0;0;-1];
+    psiPlus = 1/sqrt(2)*[0;1;1;0];
+    psiMinus = 1/sqrt(2)*[0;-1;1;0];
 
-% %     % Z and X constraints
-    addExpectations(pz*ed);
-    addExpectations((1-pz)*ed);
-    
-    % Cross terms
-%     addExpectations(0);
-%     addExpectations(0);
+    %rho_sim constraints
+    rho_sim = (1-3/2*Q)*phiPlus*phiPlus'+Q/2*(phiMinus*phiMinus'+psiPlus*psiPlus'+psiMinus*psiMinus');
 
-    % Normalization
-    addExpectations(1);
+    addExpectations(Q);
+    addExpectations(1-Q);
     
     %%%%%%%%%%%%%%%%%%%%% user-supplied channel model end %%%%%%%%%%%%%%%%%%%%%%%%%
     
     channelModel.expectations = expectations;
-    channelModel.errorRate = [ed,ed];
+    channelModel.errorRate = [];
     channelModel.pSift = [pz^2,(1-pz)^2];
 end

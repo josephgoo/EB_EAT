@@ -23,7 +23,7 @@ end
 %three types of parameters are considered: scan, fixed, optimize
 function parameters=setParameters()
 
-    parameters.names = ["ed","pz","pd","eta","etad","f","fullstat"]; %BB84 
+    parameters.names = ["ed","pz","pd","eta","etad","f","fullstat","Q"]; %BB84 
 
     %%%%%%%%%%%%%%%% 1.parameter to scan over %%%%%%%%%%%%%%%%
     %must name at least one parameter to scan (can be a single-point array if only interested in a fixed value)
@@ -36,6 +36,7 @@ function parameters=setParameters()
     %%%%%%%%%%%%%%%% 2.fixed parameters %%%%%%%%%%%%%%%%
     %optional; the constant values can be either numerical or array/matrices
     
+    parameters.fixed.Q = 0.05; %QBER
     parameters.fixed.ed = 0.01; %misalignment, defined as single-photon error, i.e. sin^2(theta)
     parameters.fixed.pz = 0.5; %basis choice probability (for Z basis)
     parameters.fixed.pd = 0; %1e-6; %dark count probability

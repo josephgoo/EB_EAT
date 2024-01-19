@@ -1,59 +1,43 @@
 %%  FUNCTION NAME: primalObjective
 % This file contains the primal problem objective function.
 %
-% % $f(\rho) := D(\mathcal{G}(\rho)||\mathcal{Z}(\mathcal{G}(\rho)))$
+% %
+% $f(\rho)=sum_{s,p}H(\mathcal{K}_{sp}(\rho))-\sum_pH(\mathcal{K}_p(\rho))
 %
-% Syntax:  fval = primalf(rho,keyMap,krausOperators)
+% Syntax:  fval = primalf(rho,krausOperators_sp,krausOperators_p)
 %
 % Input: 
 %
 %  * rho  - density matrix shared by Alice and Bob
 % 
-%  * keyMap - Alice's key map PVM (If Alice's key map POVM is not projective, use Naimark's extension)
+%  * krausOperators_sp - Kraus operators for joint secret and public
+%  information
 %
-%  * krausOperators - The Kraus operators for the post-selection map of
-%  Alice and Bob.
+%  * krausOperators_p - The Kraus operators for public information
 %
 % Output:
 %  
 %  * fval - the objective function value. 
 %%
 
-function fval = primalf(rho,keyMap,krausOperators)
+function fval = primalf(rho,krausOperators_sp,krausOperators_p)
 
 %check validity of rho and perform perturbation if not valid
 [rho,~]=perturbation_channel(rho);
 
-% if there is no Kraus operator, then proceed the calculation without the G
-% map.
-if nargin == 2 || isempty(krausOperators)
-    
-    zRho = 0;
-    for jMapElement = 1:numel(keyMap)
-        zRho = zRho + keyMap{jMapElement}*rho*keyMap{jMapElement};
-    end % calculate the Z(\rho)
-    
-    %check validity of zRho and perform perturbation if not valid
-    [zRho,~]=perturbation_channel(zRho);
+    fval=0;
+    for i=1:numel(krausOperators_sp)
+        spRho=krausOperators_sp{i}*rho*krausOperators_sp{i}';
+        %check validity of spRho and perform perturbation if not valid
+        [spRho,~]=perturbation_channel(spRho);
+        fval=fval-real(trace(spRho*logm(spRho)));
+    end
 
-    fval = real(trace(rho*(logm(rho)-logm(zRho)))); % calculate the quantum relative entropy
-else
-    % for the case there is a post-selection map.
-    
-    gRho = krausFunc(rho,krausOperators); % calculate G(\rho).
-    
-    %check validity of gRho and perform perturbation if not valid
-    [gRho,~]=perturbation_channel(gRho);
-
-    zRho = 0;
-    for jMapElement = 1:numel(keyMap)
-        zRho = zRho + keyMap{jMapElement}*gRho*keyMap{jMapElement};
-    end %calculate the Z(G(\rho))
-    
-    %check validity of zRho and perform perturbation if not valid
-    [zRho,~]=perturbation_channel(zRho);
-    
-    fval = real(trace(gRho*(logm(gRho)-logm(zRho)))); % calculate the quantum relative entropy
-end
+    for i=1:numel(krausOperators_p)
+        pRho=krausOperators_p{i}*rho*krausOperators_p{i}';
+        %check validity of pRho and perform perturbation if not valid
+        [pRho,~]=perturbation_channel(pRho);
+        fval=fval+real(trace(pRho*logm(pRho)));
+    end
 
 end

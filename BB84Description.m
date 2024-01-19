@@ -30,48 +30,97 @@ function protocolDescription = BB84Description(names,p)
     ketMinus = 1/sqrt(2)*[1;-1];
 
     % Alice and Bob POVM
-    APOVM={};
+    aPOVM={};
     for i=1:dimA
-        APOVM={APOVM{:},zket(4,i) * zket(4,i)'};
+        aPOVM={aPOVM{:},zket(4,i) * zket(4,i)'};
+    end
+    bPOVM={pz*zket(2,1)*zket(2,1)',pz*zket(2,2)*zket(2,2)',(1-pz)*ketPlus*ketPlus',(1-pz)*ketMinus*ketMinus'};
+    
+    %kraus operator for joint secret and public information
+    krausOp_sp={};
+    for a=1:4
+        for b=1:4
+            krausOp_sp={krausOp_sp{:},sqrtm(kron(aPOVM{a},bPOVM{b}))};
+        end
     end
 
-    BPOVM={1/2*zket(2,1)*zket(2,1)',1/2*zket(2,2)*zket(2,2)',1/2*ketPlus*ketPlus',1/2*ketMinus*ketMinus'};
-    
-    % kraus operator for post-processing G map. The ordering of registers
-    % is R, A, B, the two-dimensional announcement register (Alice's & Bob's announcement registers combined after sifting)
-    krausOpZ = kron(kron(kron(zket(2,1),diag([1,0,0,0]))+ kron(zket(2,2),diag([0,1,0,0])), sqrt(pz) * eye(dimB)), [1;0]); % for Z basis
-    krausOpX = kron(kron(kron(zket(2,1),diag([0,0,1,0]))+ kron(zket(2,2),diag([0,0,0,1])),sqrt(1-pz) * eye(dimB)),[0;1]); % for X basis
-    krausOp = {krausOpZ, krausOpX};
- 
-    % components for the pinching Z map
-    keyProj1 =kron(diag([1,0]), eye(dimA*dimB*2)); 
-    keyProj2 = kron(diag([0,1]), eye(dimA*dimB*2));
-    keyMap = {keyProj1, keyProj2};
 
-    % Constraints XPOVM
-    %
-
-    basis = hermitianBasis(dimA);
-    for iBasisElm = 1 : length(basis)
-        addObservables(kron(basis{iBasisElm}, eye(dimB)));
+    %kraus operator for public information
+    krausOp_00=0;
+    krausOp_01=0;
+    krausOp_10=0;
+    krausOp_11=0;
+    for a1=0:1
+        for b1=0:1
+            krausOp_00=krausOp_00+kron(aPOVM{a1+1},bPOVM{b1+1});
+            krausOp_01=krausOp_01+kron(aPOVM{a1+1},bPOVM{b1+3});
+            krausOp_10=krausOp_10+kron(aPOVM{a1+3},bPOVM{b1+1});
+            krausOp_11=krausOp_11+kron(aPOVM{a1+3},bPOVM{b1+3});
+        end
     end
+    krausOp_00=sqrtm(krausOp_00);
+    krausOp_01=sqrtm(krausOp_01);
+    krausOp_10=sqrtm(krausOp_10);
+    krausOp_11=sqrtm(krausOp_11);
 
-    % Z and X constraints
-    addObservables(kron(diag([1,0,0,0]),diag([0,1])) + kron(diag([0,1,0,0]), diag([1,0])));
-    addObservables(kron(diag([0,0,1,0]),ketMinus * ketMinus') + kron(diag([0,0,0,1]), ketPlus * ketPlus'));
+    krausOp_p={krausOp_00,krausOp_01,krausOp_10,krausOp_11};
+
+    % Constraints xPOVM
+    zeroPOVM=0;
+    onePOVM=0;
+    abortPOVM=0;
+    for a0=0:1
+        for a1=0:1
+            for b0=0:1
+                for b1=0:1
+                    if a0==0 && a1==0
+                        a=1;
+                    elseif a0==0 && a1==1
+                        a=2;
+                    elseif a0==1 && a1==0
+                        a=3;
+                    elseif a0==1 && a1==1
+                        a=4;
+                    end
+
+                    if b0==0 && b1==0
+                        b=1;
+                    elseif b0==0 && b1==1
+                        b=2;
+                    elseif b0==1 && b1==0
+                        b=3;
+                    elseif b0==1 && b1==1
+                        b=4;
+                    end
+
+                    %calculate zeroPOVM
+                    if a0==b0 && a1~=b1 && a0==1
+                        zeroPOVM=zeroPOVM+kron(aPOVM{a},bPOVM{b1+3});
+                    end
+
+                    %calculate onePOVM
+                    if a0==b0 && a1==b1 && a0==1
+                        onePOVM=onePOVM+kron(aPOVM{a},bPOVM{a});
+                    end
+
+                    %calculate abortPOVM
+                    if a0==0 || b0==0
+                        abortPOVM=abortPOVM+kron(aPOVM{a},bPOVM{b});
+                    end
+                end
+            end
+        end
+    end
     
-%     % Cross terms
-%     addObservables(kron(diag([1,-1,0,0]), ketPlus * ketPlus' - ketMinus * ketMinus'));
-%     addObservables(kron(diag([0,0,1,-1]), diag([1,-1])));
-
-    % Normalization
-    addObservables(eye(dimA*dimB));
+    addObservables(zeroPOVM);
+    addObservables(onePOVM);
+    %addObservables(abortPOVM);
     
     %%%%%%%%%%%%%%%%%%%%% user-supplied description end %%%%%%%%%%%%%%%%%%%%%%%%%
     
     protocolDescription.observables = observables;
-    protocolDescription.krausOp = krausOp;
-    protocolDescription.keyMap = keyMap;
+    protocolDescription.krausOp_sp = krausOp_sp;
+    protocolDescription.krausOp_p = krausOp_p;
     protocolDescription.dimensions = [dimA,dimB];
 
 end

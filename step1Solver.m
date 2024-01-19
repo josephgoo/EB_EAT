@@ -10,7 +10,7 @@
 % iteration, and success flag.
 %%
 
-function [rho,fval,gap,status] = step1Solver(rho0,keyMap,observables,expectations,krausOperators,options)
+function [rho,fval,gap,status] = step1Solver(rho0,krausOperators_sp,observables,expectations,krausOperators_p,options)
 
     %array to store cvx status for debugging
     status = [];
@@ -66,17 +66,6 @@ function [rho,fval,gap,status] = step1Solver(rho0,keyMap,observables,expectation
     
     fval = 0;
     gap = Inf;
-    
-    %observables
-    
-    if(strcmp(options.removeLinearDependence,'rref'))
-        [observables,independentCols] = removeLinearDependence(observables);
-        expectations = expectations(independentCols);
-    elseif(strcmp(options.removeLinearDependence,'qr'))
-        [observables,independentCols] = removeLinearDependenceQR(observables);
-        expectations = expectations(independentCols);
-    end
-
 
     % project rho0 onto the set of density matrices consistent with observations
     [rho,status] = closestDensityMatrix(rho0,observables,expectations,options,status);
@@ -101,17 +90,17 @@ function [rho,fval,gap,status] = step1Solver(rho0,keyMap,observables,expectation
             fprintf('FW iteration:%d',i)
             tstart_FW=tic;
         end
-        gradf = primalDf(rho,keyMap,krausOperators);
+        gradf = primalDf(rho,krausOperators_sp,krausOperators_p);
         
         [deltaRho,status] = subproblem(rho,observables,expectations,gradf,options,status);
 
         % perform an exact line search
         optimoptions = optimset('TolX',options.linesearchprecision);
-        stepSize = fminbnd(@(t)primalf(rho+t*deltaRho,keyMap,krausOperators),options.linesearchminstep,1,optimoptions);
+        stepSize = fminbnd(@(t)primalf(rho+t*deltaRho,krausOperators_sp,krausOperators_p),options.linesearchminstep,1,optimoptions);
 
         gap = trace((rho+deltaRho)*gradf)-trace(rho*gradf);
-        f1 = primalf(rho+stepSize*deltaRho,keyMap,krausOperators);
-        f0 = primalf(rho,keyMap,krausOperators);
+        f1 = primalf(rho+stepSize*deltaRho,krausOperators_sp,krausOperators_p);
+        f0 = primalf(rho,krausOperators_sp,krausOperators_p);
 
         if(options.verbose==1)
             t_FW=toc(tstart_FW);
@@ -140,7 +129,7 @@ function [rho,fval,gap,status] = step1Solver(rho0,keyMap,observables,expectation
         end
     end
     
-    fval = primalf(rho,keyMap,krausOperators);
+    fval = primalf(rho,krausOperators_sp,krausOperators_p);
 end
 
 function [deltaRho,status] = subproblem(rho,observables,expectations,gradf,options,status)
