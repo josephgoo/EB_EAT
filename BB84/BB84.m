@@ -78,7 +78,6 @@ function solverOptions=setOptions()
     solverOptions.optimizer.optimizerVerboseLevel = 2; %0:only output optimized result; 1:output a progress bar; 2:output at each function call
 
     %%%%%%%%%%%%%%%%% step1Solver setting %%%%%%%%%%%%%%%%%
-    % solverOptions.solver1.name = 'asymptotic';
     
     %options mainly affecting performance
     solverOptions.solver1.maxgap = 1e-6; %1e-6 for asymptotic, 2.5e-3 for finite;
@@ -94,7 +93,6 @@ function solverOptions=setOptions()
     
 
     %%%%%%%%%%%%%%%%% step2Solver setting %%%%%%%%%%%%%%%%%
-    % solverOptions.solver2.name = 'asymptotic';
     solverOptions.solver2.epsilon = 0;
     solverOptions.solver2.epsilonprime = 1e-12;
     

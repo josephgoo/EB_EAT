@@ -99,5 +99,10 @@ krausOp_p={krausOp_00,krausOp_01,krausOp_10,krausOp_11};
 
 for i=1:numel(krausOp_p)
     A=krausOp_p{i};
-    isequal(A*rho0*A',A'*rho0*A)
+    isequal(A*rho0*A',A'*rho0*A);
 end
+
+
+A=[1,2]
+A(1)
+

@@ -4,7 +4,7 @@
 % (which uses the gradient to linearizes the objective function)
 % to iteratively approach the local minimum.
 %
-% Input: initial rho0, keyMap, the observable-expectation pairs, options
+% Input: initial rho0, krausOperators_sp, krausOperators_p, the observable-expectation pairs, options
 %
 % Output: optimal rho, optimal primalf value fval, the gap from the last
 % iteration, and success flag.
