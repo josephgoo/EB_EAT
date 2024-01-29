@@ -35,12 +35,14 @@
 %
 % *  lowerbound - the coefficient of the lower bound of "min-tradeoff function" (without error correction term, without rescaling back to log2)
 %
+% *  zetaEp - error term
+%
 % *  flag - a flag to indicate whether the optimization problem is solved
 % successfully and whether we can trust the numerical result in the variable lowerbound
 %
 %%
 
-function [lowerbound, status] = step2Solver(rho, observables, expectations, krausOp_sp, krausOp_p, options)
+function [lowerbound, zetaEp, status] = step2Solver(rho, observables, expectations, krausOp_sp, krausOp_p, options)
     
 %     'REACHED STEP 2'
     warning('off','MATLAB:logm:nonPosRealEig');
@@ -83,7 +85,8 @@ function [lowerbound, status] = step2Solver(rho, observables, expectations, krau
     if epsilon == 0
         zetaEp = 0;
     else 
-       	zetaEp = 2 * epsilon * (dprime-1) * log(dprime/(epsilon*(dprime-1)));
+       	%zetaEp = 2 * epsilon * (dprime-1) * log(dprime/(epsilon*(dprime-1)));
+        zetaEp = 6 * epsilon * (dprime-1) * log2(dprime/(epsilon*(dprime-1)));
     end
     lowerbound = dualY;
     %lowerbound = sum(expectations.*dualY);

@@ -23,34 +23,42 @@ end
 %three types of parameters are considered: scan, fixed, optimize
 function parameters=setParameters()
 
-    parameters.names = ["ed","pz","pd","eta","etad","f","fullstat","Q"]; %BB84 
+    parameters.names = ["n","pz","fullstat","f","alphabet","eps","Q","beta","delta","ed"]; %BB84 
 
     %%%%%%%%%%%%%%%% 1.parameter to scan over %%%%%%%%%%%%%%%%
     %must name at least one parameter to scan (can be a single-point array if only interested in a fixed value)
     
-    parameters.scan.eta = 10.^(-0.2*(0:5:0)/10); %channel transmittance
+    %parameters.scan.eta = 10.^(-0.2*(0:5:0)/10); %channel transmittance
     % eta is changed from a single value to an array storing 5 values of
     % transmittances from 0km to 20km
+    parameters.scan.n = 10:10:100; %(finite size) sent data
     
 
     %%%%%%%%%%%%%%%% 2.fixed parameters %%%%%%%%%%%%%%%%
     %optional; the constant values can be either numerical or array/matrices
-    
-    parameters.fixed.Q = 0.05; %QBER
-    parameters.fixed.ed = 0.01; %misalignment, defined as single-photon error, i.e. sin^2(theta)
+
+    parameters.fixed.Q=0.005;%QBER
+    %parameters.fixed.ed = 0.01; %misalignment, defined as single-photon error, i.e. sin^2(theta)
     parameters.fixed.pz = 0.5; %basis choice probability (for Z basis)
-    parameters.fixed.pd = 0; %1e-6; %dark count probability
-    parameters.fixed.etad = 1; %0.045; %detector efficiency
+    %parameters.fixed.pd = 0; %1e-6; %dark count probability
+    %parameters.fixed.etad = 1; %0.045; %detector efficiency
     parameters.fixed.fullstat = 1; %using full statistics or using QBER/Gain observables only
     parameters.fixed.f = 1.16; %error correction efficiency
+    parameters.fixed.alphabet = 2; %(finite size) the encoding alphabet size - for qubits the size is 2
 
+    parameters.fixed.beta=1.9;
+
+    %security parameters for finite-size analysis
+    eps.sec=(2/3)*1e-8;
+    eps.EC=(1/3)*1e-8;
+    eps.acc=eps.sec+eps.EC;
+    parameters.fixed.eps = eps;
 
     %%%%%%%%%%%%%%%% 3.optimizable parameters %%%%%%%%%%%%%%%%
     %optional; declaring optimizable parameters automatically invokes local search optimizers
     %must be in the format of [lowerBound, initialValue, upperBound]
-    
-%     parameters.optimize.pz = [0.1,0.5,0.9];
-%     parameters.optimize.f = [1.0,1.2,2.0];
+    %parameters.optimize.beta=[1,1+1/99999,2];
+    parameters.optimize.delta=[0.9,0.9,0.99];
 end
 
 %set the running options for the solvers

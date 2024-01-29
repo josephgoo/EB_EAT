@@ -2,8 +2,8 @@ dimA = 4;
 dimB = 2;
 ketPlus = 1/sqrt(2)*[1;1];
 ketMinus = 1/sqrt(2)*[1;-1];
-pz=0.1;
-Q=0.1;
+pz=0.9;
+Q=0.433;
 
 %Bell states
 phiPlus = 1/sqrt(2)*[1;0;0;1];
@@ -96,13 +96,51 @@ krausOp_p={krausOp_00,krausOp_01,krausOp_10,krausOp_11};
 % ksp=protocolDescription.krausOp_sp;
 % kp=protocolDescription.krausOp_p;
 % primalDf(rho0,ksp,kp)
+% 
+% for i=1:numel(krausOp_p)
+%     A=krausOp_p{i};
+%     isequal(A*rho0*A',A'*rho0*A);
+% end
 
-for i=1:numel(krausOp_p)
-    A=krausOp_p{i};
-    isequal(A*rho0*A',A'*rho0*A);
-end
+M0=(1-pz)^2*kron(zket(2,1)*zket(2,1)',ketMinus*ketMinus')+(1-pz)^2*kron(zket(2,2)*zket(2,2)',ketPlus*ketPlus');
+M1=(1-pz)^2*kron(zket(2,1)*zket(2,1)',ketPlus*ketPlus')+(1-pz)^2*kron(zket(2,2)*zket(2,2)',ketMinus*ketMinus');
+rho_sim = (1-(3/2)*Q)*(phiPlus*phiPlus')+(Q/2)*((phiMinus*phiMinus')+(psiPlus*psiPlus')+(psiMinus*psiMinus'));
 
 
-A=[1,2]
-A(1)
+M0=(1/(1-pz)^2)*M0;
+M1=(1/(1-pz)^2)*M1;
+real(trace(rho_sim*M0));
+M0+M1;
+
+%8 dimension
+rho=(pz)*kron(zket(4,1)*zket(4,1)',zket(2,1)*zket(2,1)')+...
+    (pz)*kron(zket(4,2)*zket(4,2)',zket(2,2)*zket(2,2)')+...
+    (1-pz)*kron(zket(4,3)*zket(4,3)',ketPlus*ketPlus')+...
+    (1-pz)*kron(zket(4,4)*zket(4,4)',ketMinus*ketMinus');
+rho=rho/2;
+trace(rho*(zeroPOVM+onePOVM))-(1-pz)^2;
+
+M0=(1-pz)*kron(zket(4,3)*zket(4,3)',ketMinus*ketMinus')+(1-pz)*kron(zket(4,4)*zket(4,4)',ketPlus*ketPlus');
+M1=(1-pz)*kron(zket(4,3)*zket(4,3)',ketPlus*ketPlus')+(1-pz)*kron(zket(4,4)*zket(4,4)',ketMinus*ketMinus');
+trace(rho*(M0+M1));
+
+%4 dimension
+rho=kron(zket(2,1)*zket(2,1)',ketPlus*ketPlus')+...
+    kron(zket(2,2)*zket(2,2)',ketMinus*ketMinus');
+rho=rho/2;
+trace(rho);
+
+M0=kron(zket(2,1)*zket(2,1)',ketMinus*ketMinus')+kron(zket(2,2)*zket(2,2)',ketPlus*ketPlus');
+M1=kron(zket(2,1)*zket(2,1)',ketPlus*ketPlus')+kron(zket(2,2)*zket(2,2)',ketMinus*ketMinus');
+M0+M1;
+
+trace(rho_sim*M0);
+rho_sim*M0;
+
+%8dimension modified
+M0=kron(zket(4,3)*zket(4,3)',ketMinus*ketMinus')+kron(zket(4,4)*zket(4,4)',ketPlus*ketPlus');
+M1=kron(zket(4,3)*zket(4,3)',ketPlus*ketPlus')+kron(zket(4,4)*zket(4,4)',ketMinus*ketMinus');
+M0+M1
+
+
 

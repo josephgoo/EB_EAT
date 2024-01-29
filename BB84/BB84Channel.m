@@ -46,6 +46,6 @@ function channelModel = BB84Channel(protocolDescription,names,p)
     %%%%%%%%%%%%%%%%%%%%% user-supplied channel model end %%%%%%%%%%%%%%%%%%%%%%%%%
     
     channelModel.expectations = expectations;
-    channelModel.errorRate = [];
-    channelModel.pSift = [pz^2,(1-pz)^2];
+    %channelModel.errorRate = [ed,ed];
+    %channelModel.pSift = [pz^2,(1-pz)^2];
 end

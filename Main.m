@@ -19,37 +19,20 @@ cvx_solver mosek
 preset='BB84';
 [protocolDescription,channelModel,leakageEC,parameters,solverOptions]=feval(preset);
 
-%%%%%%%%%%%%%%%%%%%%% Step 1 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-[gval]=Step1(protocolDescription,channelModel,leakageEC,parameters,solverOptions);
+%%%%%%%%%%%%%%%%%%%%% Run Main Iteration %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%% Step 2 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%call main iteration function
+results=mainIteration(protocolDescription,channelModel,leakageEC,parameters,solverOptions);
+results.upperBound
 
-%user should supply the list of parameters used in this description/channel file
-%this list varNames should be a subset of the full parameter list declared in the preset file
-%parameters specified in varNames can be used below like any other MATLAB variables
-varNames=["pz"];
-
-%%%%%%%%%%%%%%%%%%%%% interfacing (please do not modify) %%%%%%%%%%%%%%%%%%%%%%%%%
-
-%the functions findVariables and addVariables automatically search the input (names,p) for
-%the parameter values based on varNames, and convert them to MATLAB variables.
-varValues = findVariables(varNames,names,p);
-addVariables(varNames,varValues);
-
-%%%%%%%%%%%%%%%%%%%%% user-supplied description begin %%%%%%%%%%%%%%%%%%%%%%%%%
-%maximum and minimum of g
-gMax=max(gval);
-gMin=min(gval);
-
-%coefficient of q(0) and q(1) in g
-gzero=gval(1);
-gone=gval(2);
-
-%coefficient of q(0) in f
-fzero=gMax+(1/(1-pz))*(gzero-gMax)
-
-
-
+%automatically parse and plot the results (optional)
+%the third optional argument is the plotting style
+%available options for 1D data:
+%1.'linear': plot x and y linearly
+%2.'linear-log': plot x versus log10(y)
+%3.'km-log': plot -log10(x)*10/0.2 (x is assumed to be transmittance and converted to km) versus log(y)
+%4.'none': do not plot
+plotResults(results,parameters,'linear')
 
 
 
