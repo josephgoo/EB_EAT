@@ -23,7 +23,7 @@ end
 %three types of parameters are considered: scan, fixed, optimize
 function parameters=setParameters()
 
-    parameters.names = ["n","pz","fullstat","f","alphabet","eps","Q","beta","delta","ed"]; %BB84 
+    parameters.names = ["n","pz","fullstat","f","alphabet","eps","Q","beta","delta"]; %BB84 
 
     %%%%%%%%%%%%%%%% 1.parameter to scan over %%%%%%%%%%%%%%%%
     %must name at least one parameter to scan (can be a single-point array if only interested in a fixed value)
@@ -31,7 +31,6 @@ function parameters=setParameters()
     %parameters.scan.eta = 10.^(-0.2*(0:5:0)/10); %channel transmittance
     % eta is changed from a single value to an array storing 5 values of
     % transmittances from 0km to 20km
-    parameters.scan.n = 10:10:100; %(finite size) sent data
     
 
     %%%%%%%%%%%%%%%% 2.fixed parameters %%%%%%%%%%%%%%%%
@@ -39,7 +38,7 @@ function parameters=setParameters()
 
     parameters.fixed.Q=0.005;%QBER
     %parameters.fixed.ed = 0.01; %misalignment, defined as single-photon error, i.e. sin^2(theta)
-    parameters.fixed.pz = 0.5; %basis choice probability (for Z basis)
+    parameters.fixed.pz = 0.99; %basis choice probability (for Z basis)
     %parameters.fixed.pd = 0; %1e-6; %dark count probability
     %parameters.fixed.etad = 1; %0.045; %detector efficiency
     parameters.fixed.fullstat = 1; %using full statistics or using QBER/Gain observables only

@@ -40,8 +40,8 @@ function channelModel = BB84Channel(protocolDescription,names,p)
     %rho_sim constraints
     rho_sim = (1-3/2*Q)*phiPlus*phiPlus'+Q/2*(phiMinus*phiMinus'+psiPlus*psiPlus'+psiMinus*psiMinus');
 
-    addExpectations(Q);
-    addExpectations(1-Q);
+    addExpectations((1-pz)^2*Q);
+    addExpectations((1-pz)^2*(1-Q));
     
     %%%%%%%%%%%%%%%%%%%%% user-supplied channel model end %%%%%%%%%%%%%%%%%%%%%%%%%
     

@@ -65,55 +65,55 @@ function protocolDescription = BB84Description(names,p)
     krausOp_p={krausOp_00,krausOp_01,krausOp_10,krausOp_11};
 
     % Constraints xPOVM
-    % zeroPOVM=0;
-    % onePOVM=0;
-    % abortPOVM=0;
-    % for a0=0:1
-    %     for a1=0:1
-    %         for b0=0:1
-    %             for b1=0:1
-    %                 if a0==0 && a1==0
-    %                     a=1;
-    %                 elseif a0==0 && a1==1
-    %                     a=2;
-    %                 elseif a0==1 && a1==0
-    %                     a=3;
-    %                 elseif a0==1 && a1==1
-    %                     a=4;
-    %                 end
-    % 
-    %                 if b0==0 && b1==0
-    %                     b=1;
-    %                 elseif b0==0 && b1==1
-    %                     b=2;
-    %                 elseif b0==1 && b1==0
-    %                     b=3;
-    %                 elseif b0==1 && b1==1
-    %                     b=4;
-    %                 end
-    % 
-    %                 %calculate zeroPOVM
-    %                 if a0==b0 && a1~=b1 && a0==1
-    %                     zeroPOVM=zeroPOVM+kron(aPOVM{a},bPOVM{b1+3});
-    %                 end
-    % 
-    %                 %calculate onePOVM
-    %                 if a0==b0 && a1==b1 && a0==1
-    %                     onePOVM=onePOVM+kron(aPOVM{a},bPOVM{a});
-    %                 end
-    % 
-    %                 %calculate abortPOVM
-    %                 if a0==0 || b0==0
-    %                     abortPOVM=abortPOVM+kron(aPOVM{a},bPOVM{b});
-    %                 end
-    %             end
-    %         end
-    %     end
-    % end
-    % 
+    zeroPOVM=0;
+    onePOVM=0;
+    abortPOVM=0;
+    for a0=0:1
+        for a1=0:1
+            for b0=0:1
+                for b1=0:1
+                    if a0==0 && a1==0
+                        a=1;
+                    elseif a0==0 && a1==1
+                        a=2;
+                    elseif a0==1 && a1==0
+                        a=3;
+                    elseif a0==1 && a1==1
+                        a=4;
+                    end
 
-    zeroPOVM=kron(zket(4,3)*zket(4,3)',ketMinus*ketMinus')+kron(zket(4,4)*zket(4,4)',ketPlus*ketPlus');
-    onePOVM=kron(zket(4,3)*zket(4,3)',ketPlus*ketPlus')+kron(zket(4,4)*zket(4,4)',ketMinus*ketMinus');
+                    if b0==0 && b1==0
+                        b=1;
+                    elseif b0==0 && b1==1
+                        b=2;
+                    elseif b0==1 && b1==0
+                        b=3;
+                    elseif b0==1 && b1==1
+                        b=4;
+                    end
+
+                    %calculate zeroPOVM
+                    if a0==b0 && a1~=b1 && a0==1
+                        zeroPOVM=zeroPOVM+kron(aPOVM{a},bPOVM{b1+3});
+                    end
+
+                    %calculate onePOVM
+                    if a0==b0 && a1==b1 && a0==1
+                        onePOVM=onePOVM+kron(aPOVM{a},bPOVM{a});
+                    end
+
+                    %calculate abortPOVM
+                    if a0==0 || b0==0
+                        abortPOVM=abortPOVM+kron(aPOVM{a},bPOVM{b});
+                    end
+                end
+            end
+        end
+    end
+
+
+    % zeroPOVM=kron(zket(4,3)*zket(4,3)',ketMinus*ketMinus')+kron(zket(4,4)*zket(4,4)',ketPlus*ketPlus');
+    % onePOVM=kron(zket(4,3)*zket(4,3)',ketPlus*ketPlus')+kron(zket(4,4)*zket(4,4)',ketMinus*ketMinus');
 
     addObservables(zeroPOVM);
     addObservables(onePOVM);

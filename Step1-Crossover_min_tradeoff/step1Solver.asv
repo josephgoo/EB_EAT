@@ -82,6 +82,15 @@ function [rho,fval,gap,status] = step1Solver(rho0,krausOperators_sp,observables,
     end
     
     rho = full(rho);
+
+    %%%try
+    Q=0.005
+    phiPlus = 1/sqrt(2)*[1;0;0;1];
+    phiMinus = 1/sqrt(2)*[1;0;0;-1];
+    psiPlus = 1/sqrt(2)*[0;1;1;0];
+    psiMinus = 1/sqrt(2)*[0;-1;1;0];
+    rho_sim = (1-3/2*Q)*phiPlus*phiPlus'+Q/2*(phiMinus*phiMinus'+psiPlus*psiPlus'+psiMinus*psiMinus');
+    rho=rho_sim;
     
     % Main optimization loop
     for i = 1:options.maxiter
@@ -164,7 +173,6 @@ function [rho,status] = closestDensityMatrix(rho0,observables,expectations,optio
         end
         for i = 1:numel(observables)
             abs(trace(observables{i}'*rho) - expectations(i)) <= options.linearconstrainttolerance
-            %abs(trace(observables{i}'*rho) - (1-0.99)^2 * expectations(i)) <= options.linearconstrainttolerance
         end
     cvx_end
     if options.verbose & (strcmp(cvx_status, 'Infeasible')) % | strcmp(cvx_status, 'Failed'))
