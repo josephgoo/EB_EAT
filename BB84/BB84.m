@@ -31,6 +31,7 @@ function parameters=setParameters()
     %parameters.scan.eta = 10.^(-0.2*(0:5:0)/10); %channel transmittance
     % eta is changed from a single value to an array storing 5 values of
     % transmittances from 0km to 20km
+    parameters.scan.n = 1e2:(1e10-1e2)/15:1e10; %(finite size) sent data
     
 
     %%%%%%%%%%%%%%%% 2.fixed parameters %%%%%%%%%%%%%%%%
