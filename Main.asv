@@ -32,7 +32,7 @@ results.upperBound
 %2.'linear-log': plot x versus log10(y)
 %3.'km-log': plot -log10(x)*10/0.2 (x is assumed to be transmittance and converted to km) versus log(y)
 %4.'none': do not plot
-%plotResults(results,parameters,'linear')
+plotResults(results,parameters,'linear')
 
 
 

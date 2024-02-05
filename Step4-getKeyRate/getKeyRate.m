@@ -49,6 +49,14 @@ function [upperBound,debugInfo]=getKeyRate(protocolDescription,channelModel,leak
     try
         solver1Status = [];
         rho0 = eye(prod(protocolDescription.dimensions));
+        % ketPlus = 1/sqrt(2)*[1;1];
+        % ketMinus = 1/sqrt(2)*[1;-1];
+        % pz=findParameter("pz",names,p);
+        % rho0=(pz)*kron(zket(4,1)*zket(4,1)',zket(2,1)*zket(2,1)')+...
+        %     (pz)*kron(zket(4,2)*zket(4,2)',zket(2,2)*zket(2,2)')+...
+        %     (1-pz)*kron(zket(4,3)*zket(4,3)',ketPlus*ketPlus')+...
+        %     (1-pz)*kron(zket(4,4)*zket(4,4)',ketMinus*ketMinus');
+        % rho0=rho0/2;
         [rho,fval,gap,solver1Status]=...
             step1Solver( ...
             rho0, ...
@@ -108,7 +116,7 @@ function [upperBound,debugInfo]=getKeyRate(protocolDescription,channelModel,leak
     %%%%%%%%%%%%%% key length upper bound %%%%%%%%%%%%%%
     n=findParameter("n",names,p);
     pz=findParameter("pz",names,p);
-    alphabet=findParameter("alphabet",names,p); 
+    alphabet=findParameter("alphabet",names,p);
     beta=findParameter("beta",names,p);
     delta=findParameter("delta",names,p);
     dS=(alphabet+1)^2;
@@ -121,7 +129,11 @@ function [upperBound,debugInfo]=getKeyRate(protocolDescription,channelModel,leak
 
     V=sqrt(mintradeoff.fVar+2)+log2(2*dS^2+1);
     K=1/(6*(2-beta)^3*log(2))*2^((beta-1)*(log2(dS)+mintradeoff.fMax-mintradeoff.fMin_Sigma))*...
-        (log(2^(log2(dS)+mintradeoff.fMax-mintradeoff.fMin_Sigma)+exp(1)^2))^3;
+       (log(2^(log2(dS)+mintradeoff.fMax-mintradeoff.fMin_Sigma)+exp(1)^2))^3
+
+    % V=log2(2*dS^2+1)
+    % K=1/(6*(2-beta)^3*log(2))*2^((beta-1)*(log2(dS)+mintradeoff.fMax-mintradeoff.fMin))*...
+    %     (log(2^(log2(dS)+mintradeoff.fMax-mintradeoff.fMin)+exp(1)^2))^3
     
     upperBound=n*mintradeoff.fMin-leakageEC-n*(((beta-1)*log(2))/2)*V^2-...
         n*(beta-1)^2*K-n*gamma*log2(abs(alphabet^2))+...

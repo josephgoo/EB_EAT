@@ -138,9 +138,9 @@ function [deltaRho,status] = subproblem(rho,observables,expectations,gradf,optio
         variable deltaRho(n,n) hermitian
         minimize real(trace(gradf*deltaRho))
         for i = 1:numel(observables)
-            abs(trace(observables{i}'*(rho + deltaRho)) - expectations(i)) <= options.linearconstrainttolerance
+            abs(trace(observables{i}'*(rho + deltaRho)) - expectations(i)) <= options.linearconstrainttolerance;
         end
-        rho + deltaRho == hermitian_semidefinite(n)
+        rho + deltaRho == hermitian_semidefinite(n);
     cvx_end
     if options.verbose & (strcmp(cvx_status, 'Infeasible')) % | strcmp(cvx_status, 'Failed'))
         fprintf("**** Warning: step 1 solver exception, subproblem status: %s ****\n",cvx_status);
@@ -163,7 +163,7 @@ function [rho,status] = closestDensityMatrix(rho0,observables,expectations,optio
             minimize -lambda_min(rho)
         end
         for i = 1:numel(observables)
-            abs(trace(observables{i}'*rho) - expectations(i)) <= options.linearconstrainttolerance
+            abs(trace(observables{i}'*rho) - expectations(i)) <= options.linearconstrainttolerance;
             %abs(trace(observables{i}'*rho) - (1-0.99)^2 * expectations(i)) <= options.linearconstrainttolerance
         end
     cvx_end

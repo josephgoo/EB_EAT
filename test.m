@@ -148,7 +148,6 @@ B=[];
 B(1:4,1:4)=zeros(4);
 B(5:8,5:8)=rho_sim;
 
-trace(rho*M0bar)
 
 
 
@@ -170,4 +169,5 @@ end
 M0=kron(zket(4,3)*zket(4,3)',ketMinus*ketMinus')+kron(zket(4,4)*zket(4,4)',ketPlus*ketPlus');
 M1=kron(zket(4,3)*zket(4,3)',ketPlus*ketPlus')+kron(zket(4,4)*zket(4,4)',ketMinus*ketMinus');
 Mperp=eye(8)-M0-M1;
-trace(rho*(M0+M1));
+trace(rho*(M0+M1))
+trace(rho*(zeroPOVM+onePOVM))

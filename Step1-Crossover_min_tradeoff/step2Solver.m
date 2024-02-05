@@ -89,6 +89,8 @@ function [lowerbound, zetaEp, status] = step2Solver(rho, observables, expectatio
         zetaEp = 6 * epsilon * (dprime-1) * log2(dprime/(epsilon*(dprime-1)));
     end
     lowerbound = dualY;
+    %pz = 0.9;
+    %lowerbound = dualY/(1-pz)^2;
     %lowerbound = sum(expectations.*dualY);
     % note: we use natural log in all the calculation
     % one needs to convert natural log to log2. 
@@ -102,8 +104,8 @@ function [dualY, status] = submaxproblem(observables, expectations, gradf)
     cvx_begin sdp
         variable dualY(nConstraints) 
         maximize  sum(expectations  .* dualY)
-        gradf - sdpCondition( dualY, observables) == hermitian_semidefinite(totalDim)
-        %-dualY>=0 % dualY should have negative values
+        gradf - sdpCondition( dualY, observables) == hermitian_semidefinite(totalDim);
+        %-dualY>=0; % dualY should have negative values
     cvx_end
     if strcmp(cvx_status, 'Infeasible') %| strcmp(cvx_status, 'Failed')
         fprintf("**** Warning: step 2 solver exception, submaxproblem status: %s ****\n",cvx_status);

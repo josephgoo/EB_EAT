@@ -46,7 +46,6 @@ function mintradeoff=Step2(gval,zetaEp,names,p)
     mintradeoff.fMin=fMin;
     mintradeoff.fMin_Sigma=fMin_Sigma;
     mintradeoff.fVar=fVar;
-
 end
 
 

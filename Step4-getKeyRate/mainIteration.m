@@ -75,7 +75,12 @@ function results=mainIteration(protocolDescription,channelModel,leakageEC,parame
             elseif(strcmp(solverOptions.optimizer.name,'gradientDescent'))
                 p_optimal = helper.gradientDescent(rateFunction,p_start,p_lower,p_upper,solverOptions.optimizer);
             elseif(strcmp(solverOptions.optimizer.name,'localSearch_Adam'))
-                p_optimal = helper.localSearch_Adam(rateFunction,p_start,p_lower,p_upper,solverOptions.optimizer);
+                rateFunction2=@(p) rateFunction(num2cell(p));
+                p_optimal = helper.localSearch_Adam(rateFunction2,p_start,p_lower,p_upper,solverOptions.optimizer);
+            elseif(strcmp(solverOptions.optimizer.name,'nonlinearProgramming'))
+                %convert input of rateFunction from cell to matrix
+                rateFunction2=@(p) rateFunction(num2cell(p));
+                p_optimal = fmincon(rateFunction2,p_start,[],[],[],[],p_lower,p_upper,[],solverOptions.optimizer);
             end
             if(solverOptions.globalSetting.verboseLevel >= 1)
                 fprintf('finished optimization\n');

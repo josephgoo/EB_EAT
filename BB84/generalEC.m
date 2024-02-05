@@ -5,7 +5,7 @@
 
 function leakageEC = generalEC(names,p)
     %this list varNames should be a subset of the full parameter list declared in the preset file
-    varNames=["f","eps","n"];
+    varNames=["f","eps","n","Q"];
     
     %the functions findVariables and addVariables automatically search the input (names,p) for
     %the parameter values based on varNames, and convert them to MATLAB variables.
@@ -15,7 +15,8 @@ function leakageEC = generalEC(names,p)
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    leakageEC = n*f*binaryEntropy(max(eps.EC,0.5))+log2(2/eps.EC);
+    %leakageEC = n*f*binaryEntropy(max(eps.EC,0.5))+log2(2/eps.EC);
+    leakageEC = n*f*binaryEntropy(Q)+log2(2/eps.EC);
     
 end
 
